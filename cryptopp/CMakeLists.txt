@@ -1379,7 +1379,6 @@ cmake_path(GET cryptopp_SOURCE_DIR PARENT_PATH CRYPTOPP_PREFIXED_INCLUDE_DIR)
 target_include_directories(
     cryptopp
     PUBLIC
-        $<BUILD_INTERFACE:${cryptopp_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CRYPTOPP_PREFIXED_INCLUDE_DIR}>
         $<INSTALL_INTERFACE:include>
 )
