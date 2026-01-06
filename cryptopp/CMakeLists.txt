@@ -1375,7 +1375,7 @@ target_compile_definitions(
     INTERFACE
         $<INSTALL_INTERFACE:CRYPTOPP_INCLUDE_PREFIX=${CRYPTOPP_INCLUDE_PREFIX}>
 )
-cmake_path(GET cryptopp_SOURCE_DIR PARENT_PATH CRYPTOPP_PREFIXED_INCLUDE_DIR)
+get_filename_component(CRYPTOPP_PREFIXED_INCLUDE_DIR ${cryptopp_SOURCE_DIR} DIRECTORY)
 target_include_directories(
     cryptopp
     PUBLIC
