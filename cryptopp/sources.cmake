@@ -64,7 +64,6 @@ set(cryptopp_SOURCES
     files.cpp
     filters.cpp
     fips140.cpp
-    fipstest.cpp
     gcm.cpp
     gcm_simd.cpp
     gf256.cpp
@@ -115,6 +114,9 @@ set(cryptopp_SOURCES
     pkcspad.cpp
     poly1305.cpp
     polynomi.cpp
+    power7_ppc.cpp
+    power8_ppc.cpp
+    power9_ppc.cpp
     ppc_simd.cpp
     primetab.cpp
     pssr.cpp
@@ -180,6 +182,21 @@ set(cryptopp_SOURCES
     zdeflate.cpp
     zinflate.cpp
     zlib.cpp
+)
+
+if(CRYPTOPP_BUILD_SHARED)
+    list(
+        APPEND 
+        cryptopp_SOURCES
+        fipstest.cpp
+    )
+endif()
+
+set(cryptopp_SOURCES_PEM
+    "${cryptopp-pem_SOURCE_DIR}/pem_common.cpp"
+    "${cryptopp-pem_SOURCE_DIR}/pem_read.cpp"
+    "${cryptopp-pem_SOURCE_DIR}/pem_write.cpp"
+    "${cryptopp-pem_SOURCE_DIR}/x509cert.cpp"
 )
 
 # ***** Library headers *****
@@ -374,6 +391,12 @@ set(cryptopp_HEADERS
     zlib.h
 )
 
+set(cryptopp_HEADERS_PEM
+    "${cryptopp-pem_SOURCE_DIR}/pem.h"
+    "${cryptopp-pem_SOURCE_DIR}/pem_common.h"
+    "${cryptopp-pem_SOURCE_DIR}/x509cert.h"
+)
+
 # ***** Test sources *****
 set(cryptopp_SOURCES_TEST
     # adhoc.cpp
@@ -400,6 +423,13 @@ set(cryptopp_SOURCES_TEST
     regtest3.cpp
     regtest4.cpp
 )
+
+if(NOT CRYPTOPP_BUILD_SHARED)
+    # The static library omits fipstest.cpp (to stay DllMain-free), but the
+    # test sources call its functions, so cryptest compiles it directly.
+    # Revert once a crypto++ release ships weidai11/cryptopp#1314.
+    list(APPEND cryptopp_SOURCES_TEST fipstest.cpp)
+endif()
 
 # ***** Test headers *****
 set(cryptopp_HEADERS_TEST bench.h factory.h validate.h)
@@ -446,5 +476,18 @@ if(ANDROID)
         APPEND
         cryptopp_SOURCES
         ${ANDROID_NDK}/sources/android/cpufeatures/cpu-features.c
+    )
+endif()
+
+if(CRYPTOPP_USE_PEM_PACK)
+    list(
+        APPEND
+        cryptopp_SOURCES
+        ${cryptopp_SOURCES_PEM}
+    )
+    list(
+        APPEND
+        cryptopp_HEADERS
+        ${cryptopp_HEADERS_PEM}
     )
 endif()

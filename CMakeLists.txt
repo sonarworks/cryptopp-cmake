@@ -60,7 +60,7 @@ project(
 
 # cmake-format: on
 
-message("=> Project : ${PROJECT_NAME} v${cryptopp-cmake_VERSION}")
+message(STATUS "=> Project : ${PROJECT_NAME} v${cryptopp-cmake_VERSION}")
 
 # ============================================================================
 # Settable options
@@ -69,8 +69,8 @@ message("=> Project : ${PROJECT_NAME} v${cryptopp-cmake_VERSION}")
 function(cryptopp_deprecated_option old_name new_name description default)
     if(DEFINED ${old_name})
         message(
-            DEPRECATION
-            "${old_name} is a deprecated option and will be ignored after 8.8.x + 3. Use ${new_name} instead"
+            AUTHOR_WARNING
+            "${old_name} is a deprecated option and will be ignored after 8.9.x + 2. Use ${new_name} instead"
         )
         set(default ${${old_name}})
     endif()
@@ -81,6 +81,11 @@ option(
     CRYPTOPP_USE_INTERMEDIATE_OBJECTS_TARGET
     "Use a common intermediate objects target for the static and shared library targets"
     ON
+)
+
+option(
+    CRYPTOPP_USE_PEM_PACK
+    "Include the PEM-Pack in compiliation (https://github.com/noloader/cryptopp-pem)"
 )
 
 if(CRYPTOPP_INCLUDE_PREFIX)
@@ -227,7 +232,7 @@ else()
     else()
         message(
             FATAL_ERROR
-            "User-provided location (${CRYPTOPP_SOURCES}) for crypto++ sources does not exit!"
+            "User-provided location (${CRYPTOPP_SOURCES}) for crypto++ sources does not exist!"
         )
     endif()
 endif()
@@ -270,5 +275,5 @@ endif()
 # Add cryptopp CMake subdirectory
 # ------------------------------------------------------------------------------
 
-message("=> Module : cryptopp")
+message(STATUS "=> Module : cryptopp")
 add_subdirectory(cryptopp)
